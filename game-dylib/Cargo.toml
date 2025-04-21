@@ -1,0 +1,15 @@
+
+[package]
+name = "game_dylib"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+LiDARSim = { path = "../game", default-features = false }
+
+[features]
+default = ["LiDARSim/default"]
+dylib-engine = ["LiDARSim/dylib-engine"]
