@@ -2,7 +2,7 @@
 use std::path::Path;
 
 use fyrox::{
-    asset::manager::ResourceManager, core::{algebra::Vector3, pool::Handle, reflect::prelude::*, type_traits::prelude::*, visitor::prelude::*}, event::Event, resource::model::{Model, ModelResourceExtension}, scene::{node::Node, Scene}, script::{ScriptContext, ScriptDeinitContext, ScriptTrait}
+    asset::manager::ResourceManager, core::{algebra::{Matrix, Quaternion, Unit, UnitQuaternion, Vector3}, pool::Handle, reflect::prelude::*, type_traits::prelude::*, visitor::prelude::*}, event::Event, resource::model::{Model, ModelResourceExtension}, scene::{node::Node, Scene}, script::{ScriptContext, ScriptDeinitContext, ScriptTrait}
 };
 
 #[derive(Visit, Reflect, Default, Debug, Clone, TypeUuidProvider, ComponentProvider)]
@@ -30,11 +30,7 @@ impl ScriptTrait for GenerateSensor {
         while i < self.sensorHeightPx{
             let mut j: u16 = 0;
             while j < self.sensorHeightPx{
-                let node = instantiate_model(path, context.resource_manager, context.scene);
-                context.scene.graph[node]
-                .local_transform_mut()
-                .set_position(Vector3::new((i as f32*self.sensorWidth/(self.sensorWidthPx - 1) as f32) - self.sensorWidth/2f32, (-(j as f32)*self.sensorHeight/(self.sensorHeightPx - 1) as f32) + self.sensorHeight/2f32, 0f32))
-                .set_rotation(Vector3::new((j as f32*self.sensorHeight/(self.sensorHeightPx - 1) as f32) - self.sensorHeight/2f32, (i as f32*self.sensorWidth/(self.sensorWidthPx - 1) as f32) - self.sensorWidth/2f32, 0f32));        
+                instantiate_model(path, context.resource_manager, context.scene, i, j, self.sensorWidth, self.sensorHeight, self.sensorWidthPx, self.sensorHeightPx, sensorFovHorizontal, sensorFovVertical);
                 j = j+1;
             }
             i = i+1;
@@ -78,10 +74,23 @@ async fn instantiate_model (
     path: &Path,
     resource_manager: &ResourceManager,
     scene: &mut Scene,
-) -> Handle<Node> {
+    i: u16,
+    j: u16,
+    sensorWidth: f32,
+    sensorHeight: f32,
+    sensorWidthPx: u16,
+    sensorHeightPx: u16,
+    horizontalFov: f32,
+    verticalFov: f32,
+) {
     // Load model first. Alternatively, you can store resource handle somewhere and use it for
     // instantiation.
     let model = resource_manager.request::<Model>(path).await.unwrap();
 
-    model.instantiate(scene)
+    let node = model.instantiate(scene);
+
+    scene.graph[node]
+                .local_transform_mut()
+                .set_position(Vector3::new((i as f32*sensorWidth/(sensorWidthPx - 1) as f32) - sensorWidth/2f32, (-(j as f32)*sensorHeight/(sensorHeightPx - 1) as f32) + sensorHeight/2f32, 0f32))
+                .set_rotation(UnitQuaternion::from_euler_angles(0f32, j as f32*verticalFov/(sensorHeightPx - 1) as f32 - verticalFov/2f32, i as f32*horizontalFov/(sensorWidthPx-1) as f32 - horizontalFov/2f32));
 }
