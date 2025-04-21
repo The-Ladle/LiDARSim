@@ -502,43 +502,13 @@
             ),
             node_infos: {
                 (
-                    index: 5,
+                    index: 54,
                     generation: 1,
                 ): (
                     is_expanded: true,
                 ),
                 (
-                    index: 49,
-                    generation: 1,
-                ): (
-                    is_expanded: true,
-                ),
-                (
-                    index: 52,
-                    generation: 1,
-                ): (
-                    is_expanded: true,
-                ),
-                (
-                    index: 60,
-                    generation: 1,
-                ): (
-                    is_expanded: true,
-                ),
-                (
-                    index: 45,
-                    generation: 1,
-                ): (
-                    is_expanded: true,
-                ),
-                (
-                    index: 57,
-                    generation: 1,
-                ): (
-                    is_expanded: true,
-                ),
-                (
-                    index: 61,
+                    index: 3,
                     generation: 1,
                 ): (
                     is_expanded: true,
@@ -556,6 +526,18 @@
                     is_expanded: true,
                 ),
                 (
+                    index: 2,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 50,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
                     index: 51,
                     generation: 1,
                 ): (
@@ -568,19 +550,19 @@
                     is_expanded: true,
                 ),
                 (
-                    index: 3,
-                    generation: 1,
-                ): (
-                    is_expanded: true,
-                ),
-                (
                     index: 59,
                     generation: 1,
                 ): (
                     is_expanded: true,
                 ),
                 (
-                    index: 54,
+                    index: 49,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 61,
                     generation: 1,
                 ): (
                     is_expanded: true,
@@ -592,19 +574,37 @@
                     is_expanded: true,
                 ),
                 (
+                    index: 60,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
                     index: 53,
                     generation: 1,
                 ): (
                     is_expanded: true,
                 ),
                 (
-                    index: 2,
+                    index: 5,
                     generation: 1,
                 ): (
                     is_expanded: true,
                 ),
                 (
-                    index: 50,
+                    index: 45,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 52,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 57,
                     generation: 1,
                 ): (
                     is_expanded: true,

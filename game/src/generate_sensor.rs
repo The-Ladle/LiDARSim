@@ -1,21 +1,23 @@
-
+use std::future::Future;
 use std::path::Path;
 
 use fyrox::{
     asset::manager::ResourceManager, core::{algebra::{Matrix, Quaternion, Unit, UnitQuaternion, Vector3}, pool::Handle, reflect::prelude::*, type_traits::prelude::*, visitor::prelude::*}, event::Event, resource::model::{Model, ModelResourceExtension}, scene::{node::Node, Scene}, script::{ScriptContext, ScriptDeinitContext, ScriptTrait}
 };
+use fyrox::core::futures;
+use fyrox::core::futures::executor::block_on;
 
 #[derive(Visit, Reflect, Default, Debug, Clone, TypeUuidProvider, ComponentProvider)]
 #[type_uuid(id = "c9a034a0-87ab-43f8-8f50-64495a3964ed")]
 #[visit(optional)]
 pub struct GenerateSensor {
     // Add fields here.
-    sensorWidthPx: u16,
-    sensorHeightPx: u16,
-    sensorWidth: f32,
-    sensorHeight: f32,
-    sensorFovDiagonal: f32,
-    pixelPrefabPath: String,
+    sensor_width_px: u16,
+    sensor_height_px: u16,
+    sensor_width: f32,
+    sensor_height: f32,
+    sensor_fov_diagonal: f32,
+    pixel_prefab_path: String,
 }
 
 impl ScriptTrait for GenerateSensor {
@@ -29,15 +31,15 @@ impl ScriptTrait for GenerateSensor {
     fn on_start(&mut self, context: &mut ScriptContext) {
         // There should be a logic that depends on other scripts in scene.
         // It is called right after **all** scripts were initialized.
-        let sensorFovHorizontal = getFovHorizontal(self.sensorWidthPx, self.sensorHeightPx, self.sensorFovDiagonal);
-        let sensorFovVertical = getFovVertical(self.sensorWidthPx, self.sensorHeightPx, self.sensorFovDiagonal);
-        let path = Path::new(&self.pixelPrefabPath);
+        let sensor_fov_horizontal = get_fov_horizontal(self.sensor_width_px, self.sensor_height_px, self.sensor_fov_diagonal);
+        let sensor_fov_vertical = get_fov_vertical(self.sensor_width_px, self.sensor_height_px, self.sensor_fov_diagonal);
+        let path = Path::new(&self.pixel_prefab_path);
         let node_mut = context.handle;
         let mut i: u16 = 0;
-        while i < self.sensorHeightPx{
+        while i < self.sensor_width_px {
             let mut j: u16 = 0;
-            while j < self.sensorHeightPx{
-                instantiate_model(node_mut, path, context.resource_manager, context.scene, i, j, self.sensorWidth, self.sensorHeight, self.sensorWidthPx, self.sensorHeightPx, sensorFovHorizontal, sensorFovVertical);
+            while j < self.sensor_height_px {
+                block_on(instantiate_model(node_mut, path, context.resource_manager, context.scene, i, j, self.sensor_width, self.sensor_height, self.sensor_width_px, self.sensor_height_px, sensor_fov_horizontal, sensor_fov_vertical));
                 j = j+1;
             }
             i = i+1;
@@ -64,11 +66,11 @@ impl ScriptTrait for GenerateSensor {
     }
 }
 
-fn getFovHorizontal(w: u16, h: u16, dfov: f32) -> f32{
+fn get_fov_horizontal(w: u16, h: u16, dfov: f32) -> f32{
     return ((dfov/2f32).tan() * (h/(h*h + w*w).isqrt()) as f32).atan() * 2f32;
 }
 
-fn getFovVertical(w: u16, h: u16, dfov: f32) -> f32{
+fn get_fov_vertical(w: u16, h: u16, dfov: f32) -> f32{
     return ((dfov/2f32).tan() * (w/(h*h + w*w).isqrt()) as f32).atan() * 2f32;
 }
 
@@ -79,26 +81,26 @@ async fn instantiate_model (
     scene: &mut Scene,
     i: u16,
     j: u16,
-    sensorWidth: f32,
-    sensorHeight: f32,
-    sensorWidthPx: u16,
-    sensorHeightPx: u16,
-    horizontalFov: f32,
-    verticalFov: f32,
-) {
+    sensor_width: f32,
+    sensor_height: f32,
+    sensor_width_px: u16,
+    sensor_height_px: u16,
+    horizontal_fov: f32,
+    vertical_fov: f32,
+) -> Handle<Node>{
     // Load model first. Alternatively, you can store resource handle somewhere and use it for
     // instantiation.
     let model = resource_manager.request::<Model>(path).await.unwrap();
 
     let position: Vector3<f32> = Vector3::new(
-        (i as f32*sensorWidth/(sensorWidthPx - 1) as f32) - sensorWidth/2f32,
-        (-(j as f32)*sensorHeight/(sensorHeightPx - 1) as f32) + sensorHeight/2f32,
+        (i as f32* sensor_width /(sensor_width_px - 1) as f32) - sensor_width /2f32,
+        (-(j as f32)* sensor_height /(sensor_height_px - 1) as f32) + sensor_height /2f32,
         0f32
     );
-    let pitch = j as f32*verticalFov/(sensorHeightPx - 1) as f32 - verticalFov/2f32;
-    let yaw = i as f32*horizontalFov/(sensorWidthPx-1) as f32 - horizontalFov/2f32;
+    let pitch = j as f32* vertical_fov /(sensor_height_px - 1) as f32 - vertical_fov /2f32;
+    let yaw = i as f32* horizontal_fov /(sensor_width_px -1) as f32 - horizontal_fov /2f32;
 
-    model.instantiate_and_attach(
+    return model.instantiate_and_attach(
         scene,
         parent_node,
         position,
