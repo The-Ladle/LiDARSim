@@ -23,23 +23,25 @@ impl ScriptTrait for GenerateSensor {
     
     fn on_init(&mut self, context: &mut ScriptContext) {
         // Put initialization logic here.
-        let sensorFovHorizontal = getFovHorizontal(self.sensorWidthPx, self.sensorHeightPx, self.sensorFovDiagonal);
-        let sensorFovVertical = getFovVertical(self.sensorWidthPx, self.sensorHeightPx, self.sensorFovDiagonal);
-        let path = Path::new(&self.pixelPrefabPath);
-        let mut i: u16 = 0;
-        while i < self.sensorHeightPx{
-            let mut j: u16 = 0;
-            while j < self.sensorHeightPx{
-                instantiate_model(path, context.resource_manager, context.scene, i, j, self.sensorWidth, self.sensorHeight, self.sensorWidthPx, self.sensorHeightPx, sensorFovHorizontal, sensorFovVertical);
-                j = j+1;
-            }
-            i = i+1;
-        }
+
     }
 
     fn on_start(&mut self, context: &mut ScriptContext) {
         // There should be a logic that depends on other scripts in scene.
         // It is called right after **all** scripts were initialized.
+        let sensorFovHorizontal = getFovHorizontal(self.sensorWidthPx, self.sensorHeightPx, self.sensorFovDiagonal);
+        let sensorFovVertical = getFovVertical(self.sensorWidthPx, self.sensorHeightPx, self.sensorFovDiagonal);
+        let path = Path::new(&self.pixelPrefabPath);
+        let node_mut = context.handle;
+        let mut i: u16 = 0;
+        while i < self.sensorHeightPx{
+            let mut j: u16 = 0;
+            while j < self.sensorHeightPx{
+                instantiate_model(node_mut, path, context.resource_manager, context.scene, i, j, self.sensorWidth, self.sensorHeight, self.sensorWidthPx, self.sensorHeightPx, sensorFovHorizontal, sensorFovVertical);
+                j = j+1;
+            }
+            i = i+1;
+        }
     }
 
     fn on_deinit(&mut self, context: &mut ScriptDeinitContext) {
@@ -71,6 +73,7 @@ fn getFovVertical(w: u16, h: u16, dfov: f32) -> f32{
 }
 
 async fn instantiate_model (
+    parent_node: Handle<Node>,
     path: &Path,
     resource_manager: &ResourceManager,
     scene: &mut Scene,
@@ -87,10 +90,36 @@ async fn instantiate_model (
     // instantiation.
     let model = resource_manager.request::<Model>(path).await.unwrap();
 
-    let node = model.instantiate(scene);
+    let position: Vector3<f32> = Vector3::new(
+        (i as f32*sensorWidth/(sensorWidthPx - 1) as f32) - sensorWidth/2f32,
+        (-(j as f32)*sensorHeight/(sensorHeightPx - 1) as f32) + sensorHeight/2f32,
+        0f32
+    );
+    let pitch = j as f32*verticalFov/(sensorHeightPx - 1) as f32 - verticalFov/2f32;
+    let yaw = i as f32*horizontalFov/(sensorWidthPx-1) as f32 - horizontalFov/2f32;
 
-    scene.graph[node]
-                .local_transform_mut()
-                .set_position(Vector3::new((i as f32*sensorWidth/(sensorWidthPx - 1) as f32) - sensorWidth/2f32, (-(j as f32)*sensorHeight/(sensorHeightPx - 1) as f32) + sensorHeight/2f32, 0f32))
-                .set_rotation(UnitQuaternion::from_euler_angles(0f32, j as f32*verticalFov/(sensorHeightPx - 1) as f32 - verticalFov/2f32, i as f32*horizontalFov/(sensorWidthPx-1) as f32 - horizontalFov/2f32));
+    model.instantiate_and_attach(
+        scene,
+        parent_node,
+        position,
+        euler_to_look_direction(position, yaw, pitch),
+        Vector3::new(1f32,1f32,1f32)
+    );
+}
+
+pub fn euler_to_look_direction(position: Vector3<f32>, yaw: f32, pitch: f32) -> Vector3<f32> {
+    // Convert degrees to radians.
+    let yaw_rad = yaw.to_radians();
+    let pitch_rad = pitch.to_radians();
+
+    // Calculate the direction vector.
+    // Note: For a left-handed system similar to Unity,
+    // - Yaw (rotation around Y) affects X and Z.
+    // - Pitch (rotation around X) affects Y.
+    let x = pitch_rad.cos() * yaw_rad.sin();
+    let y = pitch_rad.sin();
+    let z = pitch_rad.cos() * yaw_rad.cos();
+
+    let pre_offset: Vector3<f32> = Vector3::new(x, y, z).normalize();
+    return pre_offset + position;
 }
