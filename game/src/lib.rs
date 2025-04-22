@@ -1,6 +1,7 @@
 //! Game project.
 pub mod generate_sensor;
 pub mod cast_rays;
+pub mod add_sensors;
 
 use fyrox::{
     core::pool::Handle, core::visitor::prelude::*, core::reflect::prelude::*,
@@ -14,6 +15,7 @@ use std::path::Path;
 
 // Re-export the engine.
 pub use fyrox;
+use crate::add_sensors::AddSensors;
 use crate::cast_rays::CastRays;
 
 #[derive(Default, Visit, Reflect, Debug)]
@@ -28,7 +30,8 @@ impl Plugin for Game {
             .serialization_context
             .script_constructors
             .add::<GenerateSensor>("Generate Sensor")
-            .add::<CastRays>("Cast Rays");
+            .add::<CastRays>("Cast Rays")
+            .add::<AddSensors>("Add Sensors");
     }
     
     fn init(&mut self, scene_path: Option<&str>, context: PluginContext) {
