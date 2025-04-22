@@ -67,11 +67,11 @@ impl ScriptTrait for GenerateSensor {
 }
 
 fn get_fov_horizontal(w: u16, h: u16, dfov: f32) -> f32{
-    return ((dfov/2f32).tan() * (h/(h*h + w*w).isqrt()) as f32).atan() * 2f32;
+    return ((dfov/2f32).tan() * (w/(h*h + w*w).isqrt()) as f32).atan() * 2f32;
 }
 
 fn get_fov_vertical(w: u16, h: u16, dfov: f32) -> f32{
-    return ((dfov/2f32).tan() * (w/(h*h + w*w).isqrt()) as f32).atan() * 2f32;
+    return ((dfov/2f32).tan() * (h/(h*h + w*w).isqrt()) as f32).atan() * 2f32;
 }
 
 async fn instantiate_model (

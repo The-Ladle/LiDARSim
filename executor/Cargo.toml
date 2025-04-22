@@ -7,6 +7,7 @@ edition = "2021"
 [dependencies]
 fyrox = { workspace = true }
 LiDARSim = { path = "../game", optional = true }
+network-tables = "0.1.3"
 
 [features]
 default = ["LiDARSim"]

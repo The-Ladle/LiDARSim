@@ -37,7 +37,7 @@
         draw_grid: true,
     ),
     build: (
-        selected_profile: 1,
+        selected_profile: 0,
         profiles: [
             (
                 name: "Debug",
@@ -491,9 +491,9 @@
     scene_settings: {
         "data/scene.rgs": (
             camera_settings: (
-                position: (0.15329164, -0.52585113, 0.07757497),
-                yaw: -2.8899987,
-                pitch: 0.22079718,
+                position: (1.8672607, 1.0697515, 0.55973256),
+                yaw: -1.4699996,
+                pitch: 0.45079693,
                 projection: Perspective((
                     fov: 1.3089969,
                     z_near: 0.025,
@@ -502,67 +502,7 @@
             ),
             node_infos: {
                 (
-                    index: 54,
-                    generation: 1,
-                ): (
-                    is_expanded: true,
-                ),
-                (
-                    index: 3,
-                    generation: 1,
-                ): (
-                    is_expanded: true,
-                ),
-                (
-                    index: 46,
-                    generation: 1,
-                ): (
-                    is_expanded: true,
-                ),
-                (
-                    index: 56,
-                    generation: 1,
-                ): (
-                    is_expanded: true,
-                ),
-                (
-                    index: 2,
-                    generation: 1,
-                ): (
-                    is_expanded: true,
-                ),
-                (
-                    index: 50,
-                    generation: 1,
-                ): (
-                    is_expanded: true,
-                ),
-                (
-                    index: 51,
-                    generation: 1,
-                ): (
-                    is_expanded: true,
-                ),
-                (
-                    index: 58,
-                    generation: 1,
-                ): (
-                    is_expanded: true,
-                ),
-                (
-                    index: 59,
-                    generation: 1,
-                ): (
-                    is_expanded: true,
-                ),
-                (
-                    index: 49,
-                    generation: 1,
-                ): (
-                    is_expanded: true,
-                ),
-                (
-                    index: 61,
+                    index: 52,
                     generation: 1,
                 ): (
                     is_expanded: true,
@@ -574,13 +514,31 @@
                     is_expanded: true,
                 ),
                 (
-                    index: 60,
+                    index: 57,
                     generation: 1,
                 ): (
                     is_expanded: true,
                 ),
                 (
-                    index: 53,
+                    index: 54,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 46,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 59,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 2,
                     generation: 1,
                 ): (
                     is_expanded: true,
@@ -592,19 +550,73 @@
                     is_expanded: true,
                 ),
                 (
+                    index: 0,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 60,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 3,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 61,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
                     index: 45,
                     generation: 1,
                 ): (
                     is_expanded: true,
                 ),
                 (
-                    index: 52,
+                    index: 1,
                     generation: 1,
                 ): (
                     is_expanded: true,
                 ),
                 (
-                    index: 57,
+                    index: 58,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 51,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 49,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 50,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 56,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 53,
                     generation: 1,
                 ): (
                     is_expanded: true,
