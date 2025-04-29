@@ -2,6 +2,9 @@
 pub enum Message {
     AddSensors{
         sensors: Vec<Vector3<f32>>
+    },
+    RaycastStateChange{
+        on: bool
     }
 }
 
@@ -30,6 +33,9 @@ impl ScriptTrait for ManageCommands {
                 sensors: vec![Vector3::new(0.0, 0.0, 0.0)],
             });
         }
+        ctx.message_sender.send_global(Message::RaycastStateChange {
+            on: true
+        })
     }
 }
     

@@ -6,6 +6,8 @@ edition = "2021"
 
 [dependencies]
 fyrox = {workspace = true}
+network-tables = "0.1.3"
+rppal = "0.22.1"
 
 [features]
 default = ["fyrox/default"]

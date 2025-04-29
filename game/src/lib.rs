@@ -3,6 +3,7 @@ pub mod generate_sensor;
 pub mod cast_rays;
 pub mod add_sensors;
 pub mod manage_commands;
+pub mod sensor_data_process;
 
 use fyrox::{
     core::pool::Handle, core::visitor::prelude::*, core::reflect::prelude::*,
@@ -19,6 +20,7 @@ pub use fyrox;
 use crate::add_sensors::AddSensors;
 use crate::cast_rays::CastRays;
 use crate::manage_commands::ManageCommands;
+use crate::sensor_data_process::SensorDataProcess;
 
 #[derive(Default, Visit, Reflect, Debug)]
 pub struct Game {
@@ -34,7 +36,8 @@ impl Plugin for Game {
             .add::<GenerateSensor>("Generate Sensor")
             .add::<CastRays>("Cast Rays")
             .add::<AddSensors>("Add Sensors")
-            .add::<ManageCommands>("Manage Commands");
+            .add::<ManageCommands>("Manage Commands")
+            .add::<SensorDataProcess>("Process Sensor Data");
     }
     
     fn init(&mut self, scene_path: Option<&str>, context: PluginContext) {
