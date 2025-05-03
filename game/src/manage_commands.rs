@@ -15,8 +15,9 @@ use fyrox::{
     event::Event, script::{ScriptContext, ScriptDeinitContext, ScriptTrait},
 };
 use fyrox::core::algebra::{Vector, Vector3};
+use fyrox::core::math::Matrix4Ext;
 use fyrox::core::pool::Handle;
-use fyrox::graph::BaseSceneGraph;
+use fyrox::graph::{AbstractSceneGraph, BaseSceneGraph};
 use fyrox::scene::node::Node;
 
 #[derive(Visit, Reflect, Default, Debug, Clone, TypeUuidProvider, ComponentProvider)]
@@ -33,11 +34,11 @@ impl ScriptTrait for ManageCommands {
     fn on_start(&mut self, ctx: &mut ScriptContext) {
         //ctx.message_sender.send_global(Message::SpawnField {});
         let mut position: Vector3<f32> = Vector3::new(0f32, 0f32, 0f32);
+        if let Some(node) = ctx.scene.graph.try_get(ctx.handle){
+            let global_transform = node.global_transform();
 
-        if let Some(node) = ctx.scene.graph.try_get(ctx.handle) {
-            position = node.global_position();
+            position = global_transform.position();
         }
-
         if(true) {
             ctx.message_sender.send_global(Message::AddSensors {
                 sensors: vec![position]

@@ -1,131 +1,99 @@
+use std::net::{Ipv4Addr, SocketAddrV4};
+use std::sync::mpsc::{self, Receiver};
+use std::thread;
 
+use network_tables::v4::subscription::SubscriptionOptions;
+use tokio::stream::StreamExt; // for subscription.next().await
+
+// Fyrox engine imports.
 use fyrox::{
-    core::{visitor::prelude::*, reflect::prelude::*, type_traits::prelude::*},
-    event::Event, script::{ScriptContext, ScriptDeinitContext, ScriptTrait},
+    core::algebra::Vector3,
+    scene::node::Node,
+    script::{Script, ScriptContext},
 };
-use fyrox::core::algebra::{UnitQuaternion, UnitVector3, Vector3};
-use fyrox::core::pool::Handle;
-use fyrox::event::{DeviceEvent, ElementState, WindowEvent};
-use fyrox::graph::SceneGraph;
-use fyrox::keyboard::{KeyCode, PhysicalKey};
-use fyrox::scene::node::Node;
-use fyrox::scene::rigidbody::RigidBody;
+use fyrox::core::reflect::Reflect;
+use fyrox::core::{ComponentProvider, TypeUuidProvider};
+use fyrox::core::visitor::Visit;
+use fyrox::script::ScriptTrait;
+
+// Helper function that parses a comma-separated string like "x,y" into a (f32, f32) tuple.
+fn parse_position(s: &str) -> Option<(f32, f32)> {
+    let parts: Vec<&str> = s.split(',').collect();
+    if parts.len() != 2 {
+        return None;
+    }
+    let x = parts[0].trim().parse::<f32>().ok()?;
+    let y = parts[1].trim().parse::<f32>().ok()?;
+    Some((x, y))
+}
 
 #[derive(Visit, Reflect, Default, Debug, Clone, TypeUuidProvider, ComponentProvider)]
-#[type_uuid(id = "f5821615-6a49-48d0-b68e-94c62380d3db")]
+#[type_uuid(id = "2b823c01-691a-4617-8fb1-fa52cf95155d")]
 #[visit(optional)]
 pub struct MoveRobot {
-    // Add fields here.
-    #[reflect(hidden)]
-    move_forward: bool,
-
-    #[reflect(hidden)]
-    move_backward: bool,
-
-    #[reflect(hidden)]
-    move_left: bool,
-
-    #[reflect(hidden)]
-    move_right: bool,
-
-    #[reflect(hidden)]
-    yaw: f32,
-
-    #[reflect(hidden)]
-    pitch: f32,
-
-    camera: Handle<Node>,
+    // This receiver is not serialized so mark with serde(skip)
+    #[serde(skip)]
+    rx: Option<Receiver<(f32, f32)>>,
 }
 
 impl ScriptTrait for MoveRobot {
-    fn on_update(&mut self, ctx: &mut ScriptContext) {
-        let mut look_vector = Vector3::default();
-        let mut side_vector = Vector3::default();
-        if let Some(camera) = ctx.scene.graph.try_get_mut(self.camera) {
-            look_vector = camera.look_vector();
-            side_vector = camera.side_vector();
+    // Called once when the script is attached.
+    fn on_start(&mut self, _context: &ScriptContext) {
+        // Only initialize once.
+        if self.rx.is_none() {
+            // Create an mpsc channel to receive (x, y) updates.
+            let (tx, rx) = mpsc::channel::<(f32, f32)>();
+            self.rx = Some(rx);
 
-            let yaw = UnitQuaternion::from_axis_angle(&Vector3::y_axis(), self.yaw.to_radians());
-            let transform = camera.local_transform_mut();
-            transform.set_rotation(
-                UnitQuaternion::from_axis_angle(
-                    &UnitVector3::new_normalize(yaw * Vector3::x()),
-                    self.pitch.to_radians(),
-                ) * yaw,
-            );
-        }
-        if let Some(rigid_body) = ctx.scene.graph.try_get_mut_of_type::<RigidBody>(ctx.handle) {
-            // Form a new velocity vector that corresponds to the pressed buttons.
-            let mut velocity = Vector3::new(0.0, 0.0, 0.0);
-            if self.move_forward {
-                velocity += look_vector;
-            }
-            if self.move_backward {
-                velocity -= look_vector;
-            }
-            if self.move_left {
-                velocity += side_vector;
-            }
-            if self.move_right {
-                velocity -= side_vector;
-            }
+            // Spawn a separate thread with its own Tokio runtime to handle network I/O.
+            thread::spawn(move || {
+                let rt = tokio::runtime::Runtime::new().expect("Failed to create Tokio runtime");
+                rt.block_on(async move {
+                    // Connect to NetworkTables; adjust the IP and port as needed.
+                    let client = network_tables::v4::Client::try_new_w_config(
+                        SocketAddrV4::new(Ipv4Addr::new(127, 0, 0, 1), 5810),
+                        network_tables::v4::client_config::Config::default(),
+                    )
+                        .await
+                        .expect("Failed to connect to NetworkTables");
 
-            let y_vel = rigid_body.lin_vel().y;
-            if let Some(normalized_velocity) = velocity.try_normalize(f32::EPSILON) {
-                let movement_speed = 240.0 * ctx.dt;
-                rigid_body.set_lin_vel(Vector3::new(
-                    normalized_velocity.x * movement_speed,
-                    y_vel,
-                    normalized_velocity.z * movement_speed,
-                ));
-            } else {
-                // Hold player in-place in XZ plane when no button is pressed.
-                rigid_body.set_lin_vel(Vector3::new(0.0, y_vel, 0.0));
-            }
+                    // Subscribe to the topic that contains the position.
+                    // We assume the value is a string like "100.0,200.0".
+                    let mut subscription = client
+                        .subscribe_w_options(
+                            &["/AdvantageKit/RealOutputs/Odometry/Robot"],
+                            Some(SubscriptionOptions {
+                                all: Some(true),
+                                prefix: Some(false),
+                                ..Default::default()
+                            }),
+                        )
+                        .await
+                        .expect("Failed to subscribe to topic");
+
+                    // Process incoming messages.
+                    while let Some(message) = subscription.next().await {
+                        if let network_tables::Value::String(ref s) = message {
+                            if let Some((x, y)) = parse_position(s) {
+                                // Send the new position over the channel.
+                                let _ = tx.send((x, y));
+                            }
+                        }
+                    }
+                });
+            });
         }
     }
-    fn on_os_event(&mut self, event: &Event<()>, _ctx: &mut ScriptContext) {
-        match event {
-            // Raw mouse input is responsible for camera rotation.
-            Event::DeviceEvent {
-                event:
-                DeviceEvent::MouseMotion {
-                    delta: (dx, dy), ..
-                },
-                ..
-            } => {
-                // Pitch is responsible for vertical camera rotation. It has -89.9..89.0 degree limits,
-                // to prevent infinite rotation.
-                let mouse_speed = 0.35;
-                self.pitch = (self.pitch + *dy as f32 * mouse_speed).clamp(-89.9, 89.9);
-                self.yaw -= *dx as f32 * mouse_speed;
+
+    // Called every frame.
+    fn on_update(&mut self, _context: &ScriptContext) {
+        // Check if we have a valid channel.
+        if let Some(rx) = &self.rx {
+            // Process all pending position updates (if any).
+            while let Ok((x, y)) = rx.try_recv() {
+                // Update the owner's local position; Fyrox uses Vector3 so we set z to 0.
+                owner.local_transform_mut().set_position(Vector3::new(x, y, 0.0));
             }
-            // Keyboard input is responsible for player's movement.
-            Event::WindowEvent {
-                event: WindowEvent::KeyboardInput { event, .. },
-                ..
-            } => {
-                if let PhysicalKey::Code(code) = event.physical_key {
-                    let is_pressed = event.state == ElementState::Pressed;
-                    match code {
-                        KeyCode::KeyW => {
-                            self.move_forward = is_pressed;
-                        }
-                        KeyCode::KeyS => {
-                            self.move_backward = is_pressed;
-                        }
-                        KeyCode::KeyA => {
-                            self.move_left = is_pressed;
-                        }
-                        KeyCode::KeyD => {
-                            self.move_right = is_pressed;
-                        }
-                        _ => (),
-                    }
-                }
-            }
-            _ => {}
         }
     }
 }
-    

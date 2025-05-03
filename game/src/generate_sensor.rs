@@ -6,7 +6,9 @@ use fyrox::{
 };
 use fyrox::core::futures;
 use fyrox::core::futures::executor::block_on;
+use fyrox::core::math::Matrix4Ext;
 use fyrox::core::num_traits::float::FloatCore;
+use fyrox::graph::BaseSceneGraph;
 
 #[derive(Visit, Reflect, Default, Debug, Clone, TypeUuidProvider, ComponentProvider)]
 #[type_uuid(id = "c9a034a0-87ab-43f8-8f50-64495a3964ed")]
@@ -80,6 +82,13 @@ async fn instantiate_model (
     horizontal_fov: f32,
     vertical_fov: f32,
 ) -> Handle<Node>{
+    let mut parent_position: Vector3<f32> = Vector3::new(0f32, 0f32, 0f32);
+
+    if let Some(node) = scene.graph.try_get(parent_node){
+        let parent_transform = node.global_transform();
+
+        parent_position = parent_transform.position();
+    }
     // Load model first. Alternatively, you can store resource handle somewhere and use it for
     // instantiation.
     let model = resource_manager.request::<Model>(path).await.unwrap();
@@ -95,7 +104,7 @@ async fn instantiate_model (
     return model.instantiate_and_attach(
         scene,
         parent_node,
-        position,
+        position + parent_position,
         euler_to_look_direction(position, yaw, pitch),
         Vector3::new(1f32,1f32,1f32)
     );
