@@ -4,6 +4,7 @@ pub mod cast_rays;
 pub mod add_sensors;
 pub mod manage_commands;
 pub mod sensor_data_process;
+pub mod move_robot;
 
 use fyrox::{
     core::pool::Handle, core::visitor::prelude::*, core::reflect::prelude::*,
@@ -20,6 +21,7 @@ pub use fyrox;
 use crate::add_sensors::AddSensors;
 use crate::cast_rays::CastRays;
 use crate::manage_commands::ManageCommands;
+use crate::move_robot::MoveRobot;
 use crate::sensor_data_process::SensorDataProcess;
 
 #[derive(Default, Visit, Reflect, Debug)]
@@ -37,7 +39,8 @@ impl Plugin for Game {
             .add::<CastRays>("Cast Rays")
             .add::<AddSensors>("Add Sensors")
             .add::<ManageCommands>("Manage Commands")
-            .add::<SensorDataProcess>("Process Sensor Data");
+            .add::<SensorDataProcess>("Process Sensor Data")
+            .add::<MoveRobot>("Move Robot");
     }
     
     fn init(&mut self, scene_path: Option<&str>, context: PluginContext) {

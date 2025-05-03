@@ -6,6 +6,7 @@ use fyrox::{
 };
 use fyrox::core::futures;
 use fyrox::core::futures::executor::block_on;
+use fyrox::core::num_traits::float::FloatCore;
 
 #[derive(Visit, Reflect, Default, Debug, Clone, TypeUuidProvider, ComponentProvider)]
 #[type_uuid(id = "c9a034a0-87ab-43f8-8f50-64495a3964ed")]
@@ -16,7 +17,8 @@ pub struct GenerateSensor {
     sensor_height_px: u16,
     sensor_width: f32,
     sensor_height: f32,
-    sensor_fov_diagonal: f32,
+    sensor_fov_horizontal: f32,
+    sensor_fov_vertical: f32,
     pixel_prefab_path: String,
 }
 
@@ -25,21 +27,19 @@ impl ScriptTrait for GenerateSensor {
     
     fn on_init(&mut self, context: &mut ScriptContext) {
         // Put initialization logic here.
-
+        //self.sensor_width = 0.0003606;self.sensor_height = 0.0003606;
     }
 
     fn on_start(&mut self, context: &mut ScriptContext) {
         // There should be a logic that depends on other scripts in scene.
         // It is called right after **all** scripts were initialized.
-        let sensor_fov_horizontal = get_fov_horizontal(self.sensor_width_px, self.sensor_height_px, self.sensor_fov_diagonal);
-        let sensor_fov_vertical = get_fov_vertical(self.sensor_width_px, self.sensor_height_px, self.sensor_fov_diagonal);
         let path = Path::new(&self.pixel_prefab_path);
         let node_mut = context.handle;
         let mut i: u16 = 0;
         while i < self.sensor_width_px {
             let mut j: u16 = 0;
             while j < self.sensor_height_px {
-                block_on(instantiate_model(node_mut, path, context.resource_manager, context.scene, i, j, self.sensor_width, self.sensor_height, self.sensor_width_px, self.sensor_height_px, sensor_fov_horizontal, sensor_fov_vertical));
+                block_on(instantiate_model(node_mut, path, context.resource_manager, context.scene, i, j, self.sensor_width, self.sensor_height, self.sensor_width_px, self.sensor_height_px, self.sensor_fov_horizontal, self.sensor_fov_vertical));
                 j = j+1;
             }
             i = i+1;
@@ -64,14 +64,6 @@ impl ScriptTrait for GenerateSensor {
         #[allow(unused_variables)] ctx: &mut fyrox::script::ScriptMessageContext,
     ) {
     }
-}
-
-fn get_fov_horizontal(w: u16, h: u16, dfov: f32) -> f32{
-    return ((dfov/2f32).tan() * (w/(h*h + w*w).isqrt()) as f32).atan() * 2f32;
-}
-
-fn get_fov_vertical(w: u16, h: u16, dfov: f32) -> f32{
-    return ((dfov/2f32).tan() * (h/(h*h + w*w).isqrt()) as f32).atan() * 2f32;
 }
 
 async fn instantiate_model (

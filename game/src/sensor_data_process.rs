@@ -9,7 +9,9 @@ use fyrox::{
 #[visit(optional)]
 pub struct SensorDataProcess {
     // Add fields here.
-
+    expected_values: Vec<Vec<f32>>,
+    real_values: Vec<Vec<f32>>,
+    sensor_port: u8,
 }
 
 impl ScriptTrait for SensorDataProcess {

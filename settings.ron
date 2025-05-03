@@ -502,18 +502,31 @@
             ),
             node_infos: {
                 (
-                    index: 0,
-                    generation: 1,
-                ): (
-                    is_expanded: true,
-                ),
-                (
                     index: 1,
                     generation: 1,
                 ): (
                     is_expanded: true,
                 ),
+                (
+                    index: 0,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
             },
+        ),
+        "data/cube.rgs": (
+            camera_settings: (
+                position: (0.0, 1.0, 0.0),
+                yaw: 0.0,
+                pitch: 0.0,
+                projection: Perspective((
+                    fov: 1.3089969,
+                    z_near: 0.025,
+                    z_far: 128.0,
+                )),
+            ),
+            node_infos: {},
         ),
         "data/pixel.rgs": (
             camera_settings: (
@@ -528,12 +541,6 @@
             ),
             node_infos: {
                 (
-                    index: 43,
-                    generation: 1,
-                ): (
-                    is_expanded: true,
-                ),
-                (
                     index: 1,
                     generation: 1,
                 ): (
@@ -545,13 +552,19 @@
                 ): (
                     is_expanded: true,
                 ),
+                (
+                    index: 43,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
             },
         ),
         "data/scene.rgs": (
             camera_settings: (
-                position: (-1.9000045, 1.3964036, 7.399379),
-                yaw: 2.879999,
-                pitch: -0.089202285,
+                position: (1.1715193, -1.1845373, 3.7980561),
+                yaw: -18.140045,
+                pitch: 0.8207959,
                 projection: Perspective((
                     fov: 1.3089969,
                     z_near: 0.025,
@@ -560,25 +573,7 @@
             ),
             node_infos: {
                 (
-                    index: 47,
-                    generation: 1,
-                ): (
-                    is_expanded: true,
-                ),
-                (
-                    index: 46,
-                    generation: 1,
-                ): (
-                    is_expanded: true,
-                ),
-                (
-                    index: 3,
-                    generation: 1,
-                ): (
-                    is_expanded: true,
-                ),
-                (
-                    index: 5,
+                    index: 50,
                     generation: 1,
                 ): (
                     is_expanded: true,
@@ -590,103 +585,7 @@
                     is_expanded: true,
                 ),
                 (
-                    index: 49,
-                    generation: 1,
-                ): (
-                    is_expanded: true,
-                ),
-                (
-                    index: 52,
-                    generation: 1,
-                ): (
-                    is_expanded: true,
-                ),
-                (
-                    index: 6,
-                    generation: 1,
-                ): (
-                    is_expanded: true,
-                ),
-                (
-                    index: 0,
-                    generation: 1,
-                ): (
-                    is_expanded: true,
-                ),
-                (
-                    index: 48,
-                    generation: 1,
-                ): (
-                    is_expanded: false,
-                ),
-                (
-                    index: 60,
-                    generation: 1,
-                ): (
-                    is_expanded: true,
-                ),
-                (
-                    index: 59,
-                    generation: 1,
-                ): (
-                    is_expanded: true,
-                ),
-                (
-                    index: 56,
-                    generation: 1,
-                ): (
-                    is_expanded: true,
-                ),
-                (
-                    index: 45,
-                    generation: 2,
-                ): (
-                    is_expanded: true,
-                ),
-                (
-                    index: 50,
-                    generation: 1,
-                ): (
-                    is_expanded: true,
-                ),
-                (
-                    index: 1,
-                    generation: 1,
-                ): (
-                    is_expanded: true,
-                ),
-                (
-                    index: 54,
-                    generation: 1,
-                ): (
-                    is_expanded: true,
-                ),
-                (
-                    index: 4,
-                    generation: 1,
-                ): (
-                    is_expanded: true,
-                ),
-                (
-                    index: 2,
-                    generation: 1,
-                ): (
-                    is_expanded: true,
-                ),
-                (
-                    index: 45,
-                    generation: 1,
-                ): (
-                    is_expanded: true,
-                ),
-                (
-                    index: 61,
-                    generation: 1,
-                ): (
-                    is_expanded: true,
-                ),
-                (
-                    index: 51,
+                    index: 3641,
                     generation: 1,
                 ): (
                     is_expanded: true,
@@ -698,7 +597,199 @@
                     is_expanded: true,
                 ),
                 (
+                    index: 5,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 51,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 48,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
                     index: 53,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 45,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 1850,
+                    generation: 2,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 1360,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 2,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 3644,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 6,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 59,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 7,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 0,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 49,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 60,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 4,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 1268,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 1,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 1332,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 1852,
+                    generation: 2,
+                ): (
+                    is_expanded: false,
+                ),
+                (
+                    index: 3642,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 45,
+                    generation: 2,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 52,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 54,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 46,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 1277,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 3,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 3643,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 61,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 1850,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 66,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 56,
+                    generation: 1,
+                ): (
+                    is_expanded: true,
+                ),
+                (
+                    index: 47,
                     generation: 1,
                 ): (
                     is_expanded: true,
@@ -714,6 +805,7 @@
     },
     recent: (
         scenes: [
+            "data/cube.rgs",
             "data/empty_sensor.rgs",
             "data/pixel.rgs",
             "data/scene.rgs",
